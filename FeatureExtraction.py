@@ -41,6 +41,9 @@ class FeatureID:
         # Init all features dictionaries
         self.words_tags_dict = OrderedDict()
 
+        # Extract all features dictionaries
+        self.get_word_tag_pairs()
+
     def get_word_tag_pairs(self):
         """
             Extract all relevant word|tag pairs from feature statistics
