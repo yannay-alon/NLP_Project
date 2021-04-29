@@ -1,4 +1,4 @@
-from FeatureExtraction import FeatureStatistics, FeatureID
+from FeatureExtraction import FeatureID, FeatureStatistics
 
 
 def main():
