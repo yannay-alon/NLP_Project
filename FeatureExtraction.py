@@ -11,6 +11,9 @@ class FeatureStatistics:
         self.words_tags_count_dict = OrderedDict()
         # TODO: ---Add more count dictionaries here---
 
+        # Extract all features dictionaries
+        self.get_word_tag_pair_count()
+
     def get_word_tag_pair_count(self):
         """
             Extract out of text all word/tag pairs
@@ -26,7 +29,7 @@ class FeatureStatistics:
                         self.words_tags_count_dict[(cur_word, cur_tag)] = 0
                     self.words_tags_count_dict[(cur_word, cur_tag)] += 1
 
-    # --- ADD YOUR CODE BELOW --- #
+    # TODO: --- ADD YOUR CODE BELOW --- #
 
 
 class FeatureID:
