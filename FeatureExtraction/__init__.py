@@ -68,29 +68,30 @@ class FeatureStatistics:
                 self.suffix_tags_dict[(suffix, cur_tag)] = 0
             self.suffix_tags_dict[(suffix, cur_tag)] += 1
 
-    class FeatureID:
 
-        def __init__(self, feature_statistics: "FeatureStatistics", threshold):
-            self.feature_statistics = feature_statistics  # statistics class, for each feature gives empirical counts
-            self.threshold = threshold  # feature count threshold - empirical count must be higher than this
+class FeatureID:
 
-            self.n_total_features = 0  # Total number of features accumulated
-            self.n_tag_pairs = 0  # Number of Word|Tag pairs features
+    def __init__(self, feature_statistics: "FeatureStatistics", threshold):
+        self.feature_statistics = feature_statistics  # statistics class, for each feature gives empirical counts
+        self.threshold = threshold  # feature count threshold - empirical count must be higher than this
 
-            # Init all features dictionaries
-            self.words_tags_dict = OrderedDict()
+        self.n_total_features = 0  # Total number of features accumulated
+        self.n_tag_pairs = 0  # Number of Word|Tag pairs features
 
-            # Extract all features dictionaries
-            self.get_word_tag_pairs()
+        # Init all features dictionaries
+        self.words_tags_dict = OrderedDict()
 
-        def get_word_tag_pairs(self):
-            """
-                Extract all relevant word|tag pairs from feature statistics
-            """
-            for (cur_word, cur_tag), count in self.feature_statistics.words_tags_dict.items():
-                if self.threshold <= count:
-                    self.words_tags_dict[(cur_word, cur_tag)] = self.n_tag_pairs
-                    self.n_tag_pairs += 1
-            self.n_total_features += self.n_tag_pairs
+        # Extract all features dictionaries
+        self.get_word_tag_pairs()
 
-        # TODO: --- ADD YOUR CODE BELOW --- #
+    def get_word_tag_pairs(self):
+        """
+            Extract all relevant word|tag pairs from feature statistics
+        """
+        for (cur_word, cur_tag), count in self.feature_statistics.words_tags_dict.items():
+            if self.threshold <= count:
+                self.words_tags_dict[(cur_word, cur_tag)] = self.n_tag_pairs
+                self.n_tag_pairs += 1
+        self.n_total_features += self.n_tag_pairs
+
+    # TODO: --- ADD YOUR CODE BELOW --- #
