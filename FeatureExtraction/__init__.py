@@ -29,13 +29,11 @@ class FeatureStatistics:
                         self.words_tags_dict[(cur_word, cur_tag)] = 0
                     self.words_tags_dict[(cur_word, cur_tag)] += 1
 
-    # TODO: --- ADD YOUR CODE BELOW --- #
-
 
 class FeatureID:
 
     def __init__(self, feature_statistics: "FeatureStatistics", threshold):
-        self.feature_statistics = feature_statistics  # statistics class, for each featue gives empirical counts
+        self.feature_statistics = feature_statistics  # statistics class, for each feature gives empirical counts
         self.threshold = threshold  # feature count threshold - empirical count must be higher than this
 
         self.n_total_features = 0  # Total number of features accumulated
