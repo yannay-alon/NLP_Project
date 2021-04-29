@@ -1,6 +1,6 @@
 def main():
     print("aaaa it is working, celebrate")
-    print("aa")
+    print("am i an cont?")
 
 
 if __name__ == '__main__':
