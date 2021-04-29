@@ -55,9 +55,9 @@ class FeatureStatistics:
         """
         capital = cur_word[0].isupper()
         if capital:
-            if ("Capital", cur_tag) not in self.capital_tags_dict:
-                self.capital_tags_dict[("Capital", cur_tag)] = 0
-            self.capital_tags_dict[("Capital", cur_tag)] += 1
+            if ("Is_Capital", cur_tag) not in self.capital_tags_dict:
+                self.capital_tags_dict[("Is_Capital", cur_tag)] = 0
+            self.capital_tags_dict[("Is_Capital", cur_tag)] += 1
 
     def get_prefix_tags_pair_count(self, cur_word: str, cur_tag: str):
         max_length = 4
