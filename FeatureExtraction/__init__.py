@@ -8,7 +8,7 @@ class FeatureStatistics:
         self.file_path = file_path
 
         # Init all features dictionaries
-        self.words_tags_count_dict = OrderedDict()
+        self.words_tags_dict = OrderedDict()
         # TODO: ---Add more count dictionaries here---
 
         # Extract all features dictionaries
@@ -25,9 +25,9 @@ class FeatureStatistics:
 
                 for word_idx in range(len(split_words)):
                     cur_word, cur_tag = split_words[word_idx].split("_")
-                    if (cur_word, cur_tag) not in self.words_tags_count_dict:
-                        self.words_tags_count_dict[(cur_word, cur_tag)] = 0
-                    self.words_tags_count_dict[(cur_word, cur_tag)] += 1
+                    if (cur_word, cur_tag) not in self.words_tags_dict:
+                        self.words_tags_dict[(cur_word, cur_tag)] = 0
+                    self.words_tags_dict[(cur_word, cur_tag)] += 1
 
     # TODO: --- ADD YOUR CODE BELOW --- #
 
@@ -51,7 +51,7 @@ class FeatureID:
         """
             Extract all relevant word|tag pairs from feature statistics
         """
-        for (cur_word, cur_tag), count in self.feature_statistics.words_tags_count_dict.items():
+        for (cur_word, cur_tag), count in self.feature_statistics.words_tags_dict.items():
             if self.threshold <= count:
                 self.words_tags_dict[(cur_word, cur_tag)] = self.n_tag_pairs
                 self.n_tag_pairs += 1
