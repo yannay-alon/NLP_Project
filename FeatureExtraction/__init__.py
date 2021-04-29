@@ -12,13 +12,20 @@ class FeatureStatistics:
         self.capital_tags_dict = OrderedDict()
         self.prefix_tags_dict = OrderedDict()
         self.suffix_tags_dict = OrderedDict()
+
+        self.dictionaries = [self.words_tags_dict,
+                             self.capital_tags_dict,
+                             self.prefix_tags_dict,
+                             self.suffix_tags_dict,
+                             ]
         # TODO: ---Add more count dictionaries here---
 
         # Extract all features dictionaries
         pairs_dictionaries_functions = [self.get_word_tag_pair_count,
                                         self.get_capital_tag_pair_count,
                                         self.get_prefix_tags_pair_count,
-                                        self.get_suffix_tags_pair_count]
+                                        self.get_suffix_tags_pair_count,
+                                        ]
 
         self.extract_all_pairs(pairs_dictionaries_functions)
 
@@ -71,9 +78,9 @@ class FeatureStatistics:
 
 class FeatureID:
 
-    def __init__(self, feature_statistics: "FeatureStatistics", threshold):
+    def __init__(self, feature_statistics: "FeatureStatistics", thresholds):
         self.feature_statistics = feature_statistics  # statistics class, for each feature gives empirical counts
-        self.threshold = threshold  # feature count threshold - empirical count must be higher than this
+        self.thresholds = thresholds  # feature count threshold - empirical count must be higher than this
 
         self.n_total_features = 0  # Total number of features accumulated
         self.n_tag_pairs = 0  # Number of Word|Tag pairs features
@@ -88,10 +95,11 @@ class FeatureID:
         """
             Extract all relevant word|tag pairs from feature statistics
         """
-        for (cur_word, cur_tag), count in self.feature_statistics.words_tags_dict.items():
-            if self.threshold <= count:
-                self.words_tags_dict[(cur_word, cur_tag)] = self.n_tag_pairs
-                self.n_tag_pairs += 1
+        for dictionary, threshold in zip(self.feature_statistics.dictionaries, self.thresholds):
+            for (cur_word, cur_tag), count in dictionary.items():
+                if threshold <= count:
+                    self.words_tags_dict[(cur_word, cur_tag)] = self.n_tag_pairs
+                    self.n_tag_pairs += 1
         self.n_total_features += self.n_tag_pairs
 
     # TODO: --- ADD YOUR CODE BELOW --- #
