@@ -6,7 +6,7 @@ def main():
     feature_statistics = FeatureStatistics(file_path)
     feature_id = FeatureID(feature_statistics, 20)
     test_dict = feature_id.words_tags_dict
-    print(test_dict)
+    print(len(test_dict))
 
 
 if __name__ == '__main__':
