@@ -12,11 +12,13 @@ class FeatureStatistics:
         self.capital_tags_dict = OrderedDict()
         self.prefix_tags_dict = OrderedDict()
         self.suffix_tags_dict = OrderedDict()
+        self.kgram_dict = OrderedDict()
 
         self.dictionaries = [self.words_tags_dict,
                              self.capital_tags_dict,
                              self.prefix_tags_dict,
                              self.suffix_tags_dict,
+                             self.kgram_dict
                              ]
         # TODO: ---Add more count dictionaries here---
 
@@ -74,3 +76,17 @@ class FeatureStatistics:
             if (suffix, cur_tag) not in self.suffix_tags_dict:
                 self.suffix_tags_dict[(suffix, cur_tag)] = 0
             self.suffix_tags_dict[(suffix, cur_tag)] += 1
+
+    def extract_kgrams(self, maxk):
+        kgrams_maker = lambda s_t, k: zip(*[s_t[i:] for i in range(k)])
+        with open(self.file_path) as f:
+            for line in f:
+                split_words = line.split(" ")
+                for k in range(2, maxk):
+                    kgrams = kgrams_maker(split_words, k)
+                    for kgram in kgrams:
+                        splitted_list = (word_tag.split("_") for word_tag in kgram)
+                        words, tags = list(zip(*splitted_list))
+                if (words, tags) not in self.kgram_dict:
+                    self.kgram_dict[(words, tags)] = 0
+                self.kgram_dict[(words, tags)] += 1
