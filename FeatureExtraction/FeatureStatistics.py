@@ -36,7 +36,7 @@ class FeatureStatistics:
     def extract_all_pairs(self, functions: List[Callable[[str, str], None]]):
         with open(self.file_path) as f:
             for line in f:
-                split_words = line.split(" ")
+                split_words = line[:-1].split(" ")
                 # del split_words[-1]
 
                 for word_idx in range(len(split_words)):
@@ -83,7 +83,7 @@ class FeatureStatistics:
         kgrams_maker = lambda s_t, k: zip(*[s_t[i:] for i in range(k)])
         with open(self.file_path) as f:
             for line in f:
-                split_words = line.split(" ")
+                split_words = line[:-1].split(" ")
                 for k in range(2, min(max_k, len(split_words))):
                     kgrams = kgrams_maker(split_words, k)
                     for kgram in kgrams:
