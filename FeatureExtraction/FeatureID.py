@@ -1,10 +1,11 @@
 from collections import OrderedDict
 from .FeatureStatistics import FeatureStatistics
+from typing import List
 
 
 class FeatureID:
 
-    def __init__(self, feature_statistics: "FeatureStatistics", thresholds):
+    def __init__(self, feature_statistics: "FeatureStatistics", thresholds: List[int]):
         self.feature_statistics = feature_statistics  # statistics class, for each feature gives empirical counts
         self.thresholds = thresholds  # feature count threshold - empirical count must be higher than this
 

@@ -1,4 +1,5 @@
 from collections import OrderedDict
+from typing import List, Tuple, Union, Callable
 
 
 class FeatureStatistics:
@@ -32,7 +33,7 @@ class FeatureStatistics:
         self.extract_all_pairs(pairs_dictionaries_functions)
         self.extract_kgrams(3)
 
-    def extract_all_pairs(self, functions):
+    def extract_all_pairs(self, functions: List[Callable[[str, str], None]]):
         with open(self.file_path) as f:
             for line in f:
                 split_words = line.split(" ")
@@ -78,7 +79,7 @@ class FeatureStatistics:
                 self.suffix_tags_dict[(suffix, cur_tag)] = 0
             self.suffix_tags_dict[(suffix, cur_tag)] += 1
 
-    def extract_kgrams(self, max_k=3):
+    def extract_kgrams(self, max_k: int = 3):
         kgrams_maker = lambda s_t, k: zip(*[s_t[i:] for i in range(k)])
         with open(self.file_path) as f:
             for line in f:
