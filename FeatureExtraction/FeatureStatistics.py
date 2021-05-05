@@ -37,7 +37,6 @@ class FeatureStatistics:
         with open(self.file_path) as f:
             for line in f:
                 split_words = line[:-1].split(" ")
-                # del split_words[-1]
 
                 for word_idx in range(len(split_words)):
                     cur_word, cur_tag = split_words[word_idx].split("_")
