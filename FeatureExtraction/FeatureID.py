@@ -4,26 +4,29 @@ from typing import List, Callable
 
 
 class FeatureID:
+    """
+    Filters the features by thresholds and generates a unique index for each feature
+    """
 
     def __init__(self, feature_statistics: "FeatureStatistics", thresholds: List[Callable[[int], int]]):
-        self.feature_statistics = feature_statistics  # statistics class, for each feature gives empirical counts
-        self.thresholds = thresholds  # feature count threshold - empirical count must be higher than this
+        self.feature_statistics = feature_statistics
+        self.thresholds = thresholds
 
-        self.id_counter = 0  # Number of Word|Tag pairs features
+        self.id_counter = 0  # counter for the unique ids
 
-        # Init all features dictionaries
+        # Initialize all features dictionaries
         self.features_dict = OrderedDict()
 
         # Extract all features dictionaries
         self.serialize_features()
 
     @property
-    def total_features(self):
+    def number_of_features(self):
         return self.id_counter
 
     def serialize_features(self):
         """
-            Extract all relevant word|tag pairs from feature statistics
+        Extract all relevant features from feature-statistics
         """
         for dictionary, threshold in zip(self.feature_statistics.dictionaries, self.thresholds):
             for (cur_word, cur_tag), count in dictionary.items():

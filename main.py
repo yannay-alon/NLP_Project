@@ -4,6 +4,13 @@ from typing import List
 
 
 def polynomial_threshold(coefficients: List[float]):
+    """
+    Creates a threshold as a function of the number of elements in the k-gram
+
+    :param coefficients: The coefficients for the polynomial function
+    :return: A function that takes the number of elements in the k-gram and returns the threshold
+    """
+
     def threshold(length: int):
         total = 0
         for index, coefficient in enumerate(coefficients):

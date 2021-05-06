@@ -6,6 +6,9 @@ import math
 
 
 class History:
+    """
+    Creates the histories from the text file and converts the histories into feature vectors
+    """
 
     def __init__(self, feature_id: "FeatureID", text_editor: "TextEditor"):
         self.feature_id = feature_id
@@ -16,15 +19,32 @@ class History:
         features = []
         pass
 
-    def create_histories(self, max_number: int = None, style: str = None, **kwargs) -> \
+    def create_histories(self, max_number: int = None, style: str = "ALL", **kwargs) -> \
             Iterable[Tuple[Iterable[str], Iterable[str]]]:
+        """
+        Create the histories from the text editor
+
+        :param max_number: The number of histories to get, if None then reads until the end
+        :param style: The style to extract the histories <br>
+                    &emsp - ALL: Get all of the histories (or until reaching max_number) <br>
+                    &emsp - INCREMENT: Get histories starting at the given start line with the given step size <br>
+                    &emsp - RANDOM: Get histories starting at a random line with random steps
+        :param kwargs: In case of using INCREMENT: <br>
+                        &emsp start - the index of the first line to read <br>
+                        &emsp step - the number of lines between each read <br>
+                        In any other case, ignores the kwargs
+        :return: yields the histories from the read lines
+        """
 
         def increment(start, step, end):
-            yield_counter = 0
-            line_index = -1
+            # TODO: limit the number of histories to be the number of histories in the text
+
+            yield_counter = 0  # Counter for the number of the yielded histories
+            line_index = -1  # Counter for the index of the line
             for line, decorated_line in self.text_editor.read_file(cyclic=True):
                 line_index += 1
 
+                # traces the index for the increment
                 if line_index < start:
                     continue
                 if (line_index - start) % step != 0:
