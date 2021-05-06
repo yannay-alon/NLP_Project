@@ -37,10 +37,12 @@ def n_gram(n: int):
 
 
 class FeatureStatistics:
+    max_gram = 3
 
-    def __init__(self, file_path: str):
-        self.n_total_features = 0  # Total number of features accumulated
+    def __init__(self, file_path: str, k=3):
         self.file_path = file_path
+
+        FeatureStatistics.max_gram = k
 
         # Init all features dictionaries
         self.capital_tags_dict = OrderedDict()
@@ -61,7 +63,7 @@ class FeatureStatistics:
             self.get_capital_tag_pair_count,
             self.get_prefix_tags_pair_count,
             self.get_suffix_tags_pair_count,
-            self.extract_k_grams_test,
+            self.extract_k_grams,
         ]
 
         self.extract_all_pairs(pairs_dictionaries_functions)
@@ -87,7 +89,7 @@ class FeatureStatistics:
     def get_prefix_tags_pair_count(self, cur_word: str, cur_tag: str):
         max_length = 4
         for length in range(1, min(len(cur_word), max_length) + 1):
-            prefix = cur_word[:length]
+            prefix = f"PREFIX_{cur_word[:length]}"
             if (prefix, cur_tag) not in self.prefix_tags_dict:
                 self.prefix_tags_dict[(prefix, cur_tag)] = 0
             self.prefix_tags_dict[(prefix, cur_tag)] += 1
@@ -96,13 +98,13 @@ class FeatureStatistics:
     def get_suffix_tags_pair_count(self, cur_word: str, cur_tag: str):
         max_length = 4
         for length in range(1, min(len(cur_word), max_length) + 1):
-            suffix = cur_word[-length:]
+            suffix = f"SUFFIX_{cur_word[-length:]}"
             if (suffix, cur_tag) not in self.suffix_tags_dict:
                 self.suffix_tags_dict[(suffix, cur_tag)] = 0
             self.suffix_tags_dict[(suffix, cur_tag)] += 1
 
-    @n_gram(3)
-    def extract_k_grams_test(self, words, tags):
+    @n_gram(max_gram)
+    def extract_k_grams(self, words, tags):
         if (words, tags) not in self.k_gram_dict:
             self.k_gram_dict[(words, tags)] = 0
         self.k_gram_dict[(words, tags)] += 1
