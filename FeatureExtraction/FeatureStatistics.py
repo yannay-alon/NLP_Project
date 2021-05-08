@@ -96,14 +96,14 @@ class FeatureStatistics:
     @n_gram(1)
     def get_capital_tag_pair_count(self, cur_word: str, cur_tag: str) -> None:
         """
-        Extract features where the current word has a capital with a specific tag
+        Extract features where the current word starts with a capital with a specific tag
 
         :param cur_word: The current word
         :param cur_tag: The current tag
         """
         capital = cur_word[0].isupper()
         if capital:
-            key = (("Is_Capital",), (cur_tag,))
+            key = (("Starts_Capital",), (cur_tag,))
             if key not in self.capital_tags_dict:
                 self.capital_tags_dict[key] = 0
             self.capital_tags_dict[key] += 1

@@ -63,6 +63,7 @@ class History:
                         raise StopIteration
 
         if style == "ALL":
+            # return increment(0, 1, min(max_number, self.text_editor.text_size))
             return increment(0, 1, max_number)
         elif style == "RANDOM":
             return increment(random.randint(0, self.text_editor.text_size // 2),
