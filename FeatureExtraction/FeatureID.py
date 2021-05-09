@@ -1,6 +1,9 @@
 from collections import OrderedDict
+
+import scipy.sparse
+
 from .FeatureStatistics import FeatureStatistics
-from typing import List, Callable
+from .History import History
 
 
 class FeatureID:
@@ -8,20 +11,17 @@ class FeatureID:
     Filters the features by thresholds and generates a unique index for each feature
     """
 
-    def __init__(self, feature_statistics: "FeatureStatistics", thresholds: List[Callable[[int], int]]):
+    def __init__(self, feature_statistics: "FeatureStatistics"):
         """
         Create a FeatureID object
 
         :param feature_statistics: A FeatureStatistics object to use
-        :param thresholds: A list of functions, <br>
-                each function gets the number of grams in the n-gram and returns the threshold
         """
         self.feature_statistics = feature_statistics
-        self.thresholds = thresholds
 
         self.id_counter = 0  # counter for the unique ids
 
-        # Initialize all features dictionaries
+        # Initialize feature dictionary
         self.features_dict = OrderedDict()
 
         # Extract all features dictionaries
@@ -35,8 +35,14 @@ class FeatureID:
         """
         Extract all relevant features from feature-statistics
         """
-        for dictionary, threshold in zip(self.feature_statistics.dictionaries, self.thresholds):
-            for (cur_word, cur_tag), count in dictionary.items():
-                if threshold(len(cur_word)) <= count:
-                    self.features_dict[(cur_word, cur_tag)] = self.id_counter
-                    self.id_counter += 1
+        for key, count in self.feature_statistics.feature_dictionary.items():
+            if key.threshold(len(key)) <= count:
+                self.features_dict[key] = self.id_counter
+                self.id_counter += 1
+
+    def history_to_vector(self, history: "History"):
+        feature_vector = scipy.sparse.lil_matrix(shape=(self.number_of_features, 1), dtype=int)
+        keys = self.feature_statistics.get_keys(history)
+        for key in keys:
+            if key in self.features_dict.keys():  # TODO: it will be faster with try catch
+                feature_vector[self.features_dict[key], 0] = 1

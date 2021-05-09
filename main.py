@@ -1,38 +1,16 @@
-from FeatureExtraction import FeatureStatistics, FeatureID, TextEditor
+from FeatureExtraction import FeatureStatistics, FeatureID, HistoryHandler
 import pandas as pd
-from typing import List
-
-
-def polynomial_threshold(coefficients: List[float]):
-    """
-    Creates a threshold as a function of the number of elements in the k-gram
-
-    :param coefficients: The coefficients for the polynomial function
-    :return: A function that takes the number of elements in the k-gram and returns the threshold
-    """
-
-    def threshold(length: int):
-        total = 0
-        for index, coefficient in enumerate(coefficients):
-            total += coefficient * length ** index
-        return int(total)
-
-    return threshold
 
 
 def main():
-    file_path = r"Data/train1.wtag"
+    file_path = r"Data/test1.wtag"
     max_gram = 3
+    # <editor-fold desc="create feature dict">
 
-    text_editor = TextEditor(file_path, max_gram)
-    feature_statistics = FeatureStatistics(text_editor)
-
-    feature_id = FeatureID(feature_statistics, [
-        polynomial_threshold([25]),  # Capital
-        polynomial_threshold([20]),  # Prefix
-        polynomial_threshold([15]),  # Suffix
-        polynomial_threshold([24, -10, 1]),  # n-gram
-    ])
+    history_handler = HistoryHandler(file_path, max_gram)
+    feature_statistics = FeatureStatistics(history_handler.create_histories(1000, "ALL"))
+    feature_dict = feature_statistics.feature_dictionary
+    feature_id = FeatureID(feature_statistics)
 
     test_dict = feature_id.features_dict
 
@@ -40,6 +18,13 @@ def main():
     pd.DataFrame(list(test_dict.items()), columns=["Key", "Value"]). \
         to_csv("features.csv", columns=["Key", "Value"], index=False)
     print(len(test_dict))
+
+    # </editor-fold>
+
+    for history in history_handler.create_histories(1, "RANDOM"):
+        vector = feature_id.history_to_vector(history)
+        print(vector)
+        break
 
 
 if __name__ == '__main__':

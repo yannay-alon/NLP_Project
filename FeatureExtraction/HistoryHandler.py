@@ -1,5 +1,3 @@
-from .FeatureID import FeatureID
-from .TextEditor import TextEditor
 from .History import History
 from typing import List, Tuple, Iterable
 import random
@@ -11,15 +9,9 @@ class HistoryHandler:
     Creates the histories from the text file and converts the histories into feature vectors
     """
 
-    def __init__(self, feature_id: "FeatureID", text_editor: "TextEditor"):
-        self.feature_id = feature_id
-        self.text_editor = text_editor
-        self.history_length = text_editor.window_size
-
-    def history_to_vector(self, history_words: List[str], history_tags: List[str]):
-        features = []
-        for words, tags in zip(history_words, history_tags):
-            features[self.feature_id.features_dict[(words, tags)]] = 1
+    def __init__(self, file_path: str, window_size: int):
+        self.text_editor = TextEditor(file_path, window_size)
+        self.history_length = window_size
 
     def create_histories(self, max_number: int = None, style: str = "ALL", **kwargs) -> Iterable["History"]:
         """
@@ -61,7 +53,8 @@ class HistoryHandler:
 
                     yield_counter += 1
                     if end is not None and end <= yield_counter:
-                        raise StopIteration
+                        # raise StopIteration
+                        return
 
         if style == "ALL":
             # return increment(0, 1, min(max_number, self.text_editor.text_size))
@@ -72,3 +65,53 @@ class HistoryHandler:
                              max_number)
         elif style == "INCREMENT":
             return increment(kwargs["start"], kwargs["step"], max_number)
+
+
+class TextEditor:
+    """
+    Reads file with a specific window size \n
+    Adds start and end symbols for the line od the text
+    """
+
+    def __init__(self, file_path: str, window_size: int):
+        self.file_path = file_path
+        self.window_size = window_size
+        self.text_size = sum(1 for _ in open(file_path))  # Number of lined in the text
+
+    def read_file(self, cyclic: bool = False) -> Tuple[str, str]:
+        """
+        Reads the file and yields its lines \n
+        Gets the original lines and the lines with the start and end symbols
+
+        :param cyclic: Whether or not read the file from the beginning after the end
+        :return: The original line as it was written in the file <br>
+                The decorated line with the extra symbols
+        """
+        delimiters = ["_", " "]
+
+        # Special symbols for the beginning and ending of the line
+        start = "(╯°□°）╯︵┻━┻"
+        end = "┬─┬ノ(゜-゜ノ)"
+
+        # Remove any delimiter (just in case)
+        for delimiter in delimiters:
+            start = start.replace(delimiter, "")
+
+        for delimiter in delimiters:
+            start = start.replace(delimiter, "")
+
+        # Make the special symbols as word_tag pairs
+        start = f"{start}_{start} " * (self.window_size - 1)
+        end = f"{end}_{end}"
+
+        while True:
+            with open(self.file_path) as file:
+                for line in file:
+                    # Remove line breaks (\n) from the end of the line
+                    line = line.strip("\n")
+
+                    decorated_line = f"{start}{line} {end}"
+                    yield line, decorated_line
+
+            if not cyclic:
+                break
