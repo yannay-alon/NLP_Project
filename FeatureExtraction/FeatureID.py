@@ -9,6 +9,13 @@ class FeatureID:
     """
 
     def __init__(self, feature_statistics: "FeatureStatistics", thresholds: List[Callable[[int], int]]):
+        """
+        Create a FeatureID object
+
+        :param feature_statistics: A FeatureStatistics object to use
+        :param thresholds: A list of functions, <br>
+                each function gets the number of grams in the n-gram and returns the threshold
+        """
         self.feature_statistics = feature_statistics
         self.thresholds = thresholds
 

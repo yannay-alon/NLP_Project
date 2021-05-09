@@ -36,7 +36,9 @@ def main():
 
     test_dict = feature_id.features_dict
 
-    pd.DataFrame(list(test_dict.items()), columns=["Key", "Value"]).to_csv("features_1.csv", columns=["Key", "Value"])
+    # Save the features in as csv file
+    pd.DataFrame(list(test_dict.items()), columns=["Key", "Value"]). \
+        to_csv("features.csv", columns=["Key", "Value"], index=False)
     print(len(test_dict))
 
 

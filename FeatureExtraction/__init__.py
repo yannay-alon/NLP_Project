@@ -1,4 +1,6 @@
+from .Key import Key
+from .History import History
 from .FeatureStatistics import FeatureStatistics
 from .FeatureID import FeatureID
-from .History import History
+from .HistoryHandler import HistoryHandler
 from .TextEditor import TextEditor

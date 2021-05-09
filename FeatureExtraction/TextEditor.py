@@ -10,7 +10,7 @@ class TextEditor:
     def __init__(self, file_path: str, window_size: int):
         self.file_path = file_path
         self.window_size = window_size
-        self.text_size = sum(1 for line in open(file_path))  # Number of lined in the text
+        self.text_size = sum(1 for _ in open(file_path))  # Number of lined in the text
 
     def read_file(self, cyclic: bool = False) -> Tuple[str, str]:
         """
@@ -21,21 +21,31 @@ class TextEditor:
         :return: The original line as it was written in the file <br>
                 The decorated line with the extra symbols
         """
+        delimiters = ["_", " "]
+
+        # Special symbols for the beginning and ending of the line
+        start = "(╯°□°）╯︵┻━┻"
+        end = "┬─┬ノ(゜-゜ノ)"
+
+        # Remove any delimiter (just in case)
+        for delimiter in delimiters:
+            start = start.replace(delimiter, "")
+
+        for delimiter in delimiters:
+            start = start.replace(delimiter, "")
+
+        # Make the special symbols as word_tag pairs
+        start = f"{start}_{start} " * (self.window_size - 1)
+        end = f"{end}_{end}"
+
         while True:
             with open(self.file_path) as file:
                 for line in file:
                     # Remove line breaks (\n) from the end of the line
-                    line = line[:-1]
-
-                    # Special symbols for the beginning and ending of the line
-                    start = "(╯°□°）╯︵┻━┻".replace(" ", "").replace("_", "")
-                    start = f"{start}_{start} " * (self.window_size - 1)
-
-                    end = "┬─┬ノ(゜-゜ノ)".replace(" ", "").replace("_", "")
-                    end = f"{end}_{end}"
+                    line = line.strip("\n")
 
                     decorated_line = f"{start}{line} {end}"
-
                     yield line, decorated_line
+
             if not cyclic:
                 break
