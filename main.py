@@ -3,12 +3,12 @@ import pandas as pd
 
 
 def main():
-    file_path = r"Data/test1.wtag"
+    file_path = r"Data/train1.wtag"
     max_gram = 3
     # <editor-fold desc="create feature dict">
 
     history_handler = HistoryHandler(file_path, max_gram)
-    feature_statistics = FeatureStatistics(history_handler.create_histories(1000, "ALL"))
+    feature_statistics = FeatureStatistics(history_handler.create_histories(None, "ALL"))
     feature_dict = feature_statistics.feature_dictionary
     feature_id = FeatureID(feature_statistics)
 
@@ -21,10 +21,10 @@ def main():
 
     # </editor-fold>
 
-    for history in history_handler.create_histories(1, "RANDOM"):
+    for history in history_handler.create_histories(5, "RANDOM"):
+        print(history)
         vector = feature_id.history_to_vector(history)
         print(vector)
-        break
 
 
 if __name__ == '__main__':

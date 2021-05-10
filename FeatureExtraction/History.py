@@ -1,4 +1,4 @@
-from typing import Tuple, Union
+from typing import Tuple
 
 
 class History:
@@ -8,3 +8,17 @@ class History:
 
     def __len__(self):
         return len(self.words)
+
+    def __eq__(self, other):
+        if isinstance(other, History):
+            return self.words == other.words and self.tags == other.tags
+        return False
+
+    def __hash__(self):
+        return hash(self.words) ^ hash(self.tags)
+
+    def __repr__(self):
+        return f"words: {self.words}, tags: {self.tags}"
+
+    def __str__(self):
+        return f"words: {self.words}, tags: {self.tags}"

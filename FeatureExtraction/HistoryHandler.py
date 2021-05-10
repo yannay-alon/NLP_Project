@@ -29,12 +29,12 @@ class HistoryHandler:
         :return: yields the histories from the read lines
         """
 
-        def increment(start, step, end):
+        def increment(start, step, end, cyclic=True):
             # TODO: limit the number of histories to be the number of histories in the text
 
             yield_counter = 0  # Counter for the number of the yielded histories
             line_index = -1  # Counter for the index of the line
-            for line, decorated_line in self.text_editor.read_file(cyclic=True):
+            for line, decorated_line in self.text_editor.read_file(cyclic=cyclic):
                 line_index += 1
 
                 # traces the index for the increment
@@ -53,16 +53,14 @@ class HistoryHandler:
 
                     yield_counter += 1
                     if end is not None and end <= yield_counter:
-                        # raise StopIteration
                         return
 
         if style == "ALL":
             # return increment(0, 1, min(max_number, self.text_editor.text_size))
-            return increment(0, 1, max_number)
+            return increment(0, 1, max_number, False)
         elif style == "RANDOM":
             return increment(random.randint(0, self.text_editor.text_size // 2),
-                             random.randint(1, int(math.sqrt(self.text_editor.text_size))),
-                             max_number)
+                             random.randint(1, int(math.sqrt(self.text_editor.text_size))), max_number)
         elif style == "INCREMENT":
             return increment(kwargs["start"], kwargs["step"], max_number)
 

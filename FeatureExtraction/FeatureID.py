@@ -1,7 +1,5 @@
 from collections import OrderedDict
-
 import scipy.sparse
-
 from .FeatureStatistics import FeatureStatistics
 from .History import History
 
@@ -36,13 +34,15 @@ class FeatureID:
         Extract all relevant features from feature-statistics
         """
         for key, count in self.feature_statistics.feature_dictionary.items():
-            if key.threshold(len(key)) <= count:
+            if key.threshold <= count:
                 self.features_dict[key] = self.id_counter
                 self.id_counter += 1
 
     def history_to_vector(self, history: "History"):
-        feature_vector = scipy.sparse.lil_matrix(shape=(self.number_of_features, 1), dtype=int)
-        keys = self.feature_statistics.get_keys(history)
-        for key in keys:
-            if key in self.features_dict.keys():  # TODO: it will be faster with try catch
+        feature_vector = scipy.sparse.dok_matrix((self.number_of_features, 1), dtype=int)
+        for key in self.feature_statistics.get_keys(history):
+            try:
                 feature_vector[self.features_dict[key], 0] = 1
+            except KeyError:
+                pass
+        return feature_vector.tocsr()
