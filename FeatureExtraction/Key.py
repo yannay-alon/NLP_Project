@@ -12,11 +12,11 @@ class Key:
 
     def __eq__(self, other):
         if isinstance(other, Key):
-            return self.words == other.words and self.tags == other.tags and self.threshold == other.threshold
+            return self.words == other.words and self.tags == other.tags
         return False
 
     def __hash__(self):
-        return hash(self.words) ^ hash(self.tags) ^ hash(self.threshold)
+        return hash(self.words) ^ hash(self.tags)
 
     def __repr__(self):
         return f"words: {self.words}, tags: {self.tags}, threshold: {self.threshold}"
