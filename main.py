@@ -14,13 +14,13 @@ def main():
 
     history_handler = HistoryHandler(file_path, max_gram)
     if path.exists(features_file_path):
-        feature_id = FeatureID.read_features_from_csv(features_file_path)
+        feature_id = FeatureID.read_features_from_json(features_file_path)
     else:
         feature_statistics = FeatureStatistics(history_handler.create_histories(None, "ALL"))
         feature_id = FeatureID(feature_statistics)
 
         # Save the features in as csv file
-        feature_id.save_feature_as_csv(features_file_path)
+        feature_id.save_feature_as_json(features_file_path)
 
     # </editor-fold>
 

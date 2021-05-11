@@ -52,26 +52,22 @@ class FeatureID:
                 pass
         return feature_vector.tocsr()
 
-    # <editor-fold desc="I/O csv">
+    # <editor-fold desc="I/O json">
     @staticmethod
-    def read_features_from_csv(path: str):
-        def convert_to_tuple(string: str):
-            sub_strings = string[1:-1].replace(" ", "").replace("\'", "").split(",")
-            if not sub_strings[-1]:
-                sub_strings = sub_strings[:-1]
-            return tuple(sub_strings)
+    def read_features_from_json(path: str):
 
         feature_id = FeatureID()
-        feature_id.features_dict = OrderedDict([(Key(convert_to_tuple(d["Words"]),
-                                                     convert_to_tuple(d["Tags"]), 1),
-                                                 int(d["Value"])) for d in
-                                                pd.read_csv(path).to_dict(into=dict, orient="records")])
 
+        dictionary = pd.read_json(path).to_dict(orient="records")
+        feature_id.features_dict = OrderedDict()
+        for d in dictionary:
+            key = Key(tuple(d["Words"]), tuple(d["Tags"]), 1)
+            feature_id.features_dict[key] = d["Value"]
         feature_id.id_counter = len(feature_id.features_dict.keys())
         return feature_id
 
-    def save_feature_as_csv(self, path: str):
-        data = [(key.words, key.tags, value) for key, value in self.features_dict.items()]
+    def save_feature_as_json(self, path: str):
+        data = [[[*key.words], [*key.tags], value] for key, value in self.features_dict.items()]
         pd.DataFrame(data, columns=["Words", "Tags", "Value"]) \
-            .to_csv(path, columns=["Words", "Tags", "Value"], index=False)
+            .to_json(path, orient="records")
     # </editor-fold>
