@@ -25,11 +25,7 @@ def main():
     # </editor-fold>
 
     optimizer = Optimizer(feature_id, history_handler)
-    vectors = []
-    for history in history_handler.create_histories(100, "RANDOM"):
-        vectors.append(feature_id.history_to_vector(history))
-    vectors = sparse.hstack(vectors)
-    optimizer.objective(optimizer.weights, vectors, 2)
+    optimizer.objective(optimizer.weights, history_handler.create_histories(100, "RANDOM"), 2)
 
 
 if __name__ == '__main__':

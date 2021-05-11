@@ -48,7 +48,7 @@ class HistoryHandler:
                 k_grams = zip(*[split_words[i:] for i in range(self.history_length)])
                 for k_gram in k_grams:
                     split_list = (word_tag.split("_") for word_tag in k_gram)
-                    words, tags = list(zip(*split_list))
+                    words, tags = zip(*split_list)
                     yield History(words, tags)
 
                     yield_counter += 1
@@ -74,7 +74,18 @@ class TextEditor:
     def __init__(self, file_path: str, window_size: int):
         self.file_path = file_path
         self.window_size = window_size
-        self.text_size = sum(1 for _ in open(file_path))  # Number of lined in the text
+        self.text_size = 0
+        self.tags = set()
+        self.words = set()
+
+        with open(file_path) as file:
+            for line in file:
+                self.text_size += 1
+
+                word_tag_list = line.strip("\n").split(" ")
+                words, tags = zip(*(word_tag.split("_") for word_tag in word_tag_list))
+                self.tags.update(tags)
+                self.words.update(words)
 
     def read_file(self, cyclic: bool = False) -> Tuple[str, str]:
         """

@@ -57,13 +57,14 @@ class FeatureID:
     def read_features_from_json(path: str):
 
         feature_id = FeatureID()
+        feature_id.features_dict = OrderedDict()
 
         dictionary = pd.read_json(path).to_dict(orient="records")
-        feature_id.features_dict = OrderedDict()
         for d in dictionary:
             key = Key(tuple(d["Words"]), tuple(d["Tags"]), 1)
             feature_id.features_dict[key] = d["Value"]
         feature_id.id_counter = len(feature_id.features_dict.keys())
+
         return feature_id
 
     def save_feature_as_json(self, path: str):
