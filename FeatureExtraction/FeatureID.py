@@ -1,8 +1,8 @@
 from collections import OrderedDict
 import scipy.sparse
-from Project.FeatureExtraction.FeatureStatistics import FeatureStatistics
-from Project.FeatureExtraction.History import History
-from Project.FeatureExtraction.Key import Key
+from ..FeatureExtraction.FeatureStatistics import FeatureStatistics
+from ..FeatureExtraction.History import History
+from ..FeatureExtraction.Key import Key
 import pandas as pd
 
 

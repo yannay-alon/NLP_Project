@@ -1,7 +1,7 @@
 from collections import OrderedDict
 from typing import Iterable, List, Callable
-from Project.FeatureExtraction.History import History
-from Project.FeatureExtraction.Key import Key
+from ..FeatureExtraction.History import History
+from ..FeatureExtraction.Key import Key
 import re
 
 

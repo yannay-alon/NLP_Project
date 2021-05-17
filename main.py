@@ -7,7 +7,7 @@ from scipy import sparse
 
 def main():
     file_path = r"Data/train1.wtag"
-    features_file_path = r"features.csv"
+    features_file_path = r"features.json"
     max_gram = 3
 
     # <editor-fold desc="create feature dict">
@@ -24,8 +24,8 @@ def main():
 
     # </editor-fold>
 
-    optimizer = Optimizer(feature_id, history_handler)
-    optimizer.objective(optimizer.weights, history_handler.create_histories(100, "RANDOM"), 2)
+    optimizer = Optimizer(feature_id, history_handler, "weights.pkl")
+    optimizer.optimize()
 
 
 if __name__ == '__main__':

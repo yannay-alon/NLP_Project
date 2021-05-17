@@ -1,5 +1,5 @@
-from Project.FeatureExtraction.History import History
-from typing import List, Tuple, Iterable
+from ..FeatureExtraction.History import History
+from typing import Tuple, Iterable
 import random
 import math
 
