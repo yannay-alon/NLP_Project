@@ -1,8 +1,15 @@
-from Project.FeatureExtraction import FeatureStatistics, FeatureID, HistoryHandler
+from Project.FeatureExtraction import FeatureStatistics, FeatureID, HistoryHandler, History
 from Project.Train import Optimizer
 from os import path
-import numpy as np
-from scipy import sparse
+
+
+def debugging():
+    history_to_check = History(('(╯°□°）╯︵┻━┻', '(╯°□°）╯︵┻━┻', 'McDonnell'),
+                               ('(╯°□°）╯︵┻━┻', '(╯°□°）╯︵┻━┻', "''"))
+    features_file_path = r"features.json"
+    feature_id = FeatureID.read_features_from_json(features_file_path)
+
+    print(feature_id.history_to_vector(history_to_check))
 
 
 def main():
@@ -25,6 +32,8 @@ def main():
     # </editor-fold>
 
     optimizer = Optimizer(feature_id, history_handler, "weights.pkl")
+    # for i in range(100):
+    #     optimizer.objective(optimizer.weights, optimizer.history_handler.create_histories(900, "RANDOM"), 2)
     optimizer.optimize()
 
 

@@ -75,8 +75,22 @@ class TextEditor:
         self.file_path = file_path
         self.window_size = window_size
         self.text_size = 0
-        self.tags = set()
-        self.words = set()
+
+        # Special symbols for the beginning and ending of the line
+        self.start = "(╯°□°）╯︵┻━┻"
+        self.end = "┬─┬ノ(゜-゜ノ)"
+
+        self.delimiters = ["_", " "]
+
+        # Remove any delimiter (just in case)
+        for delimiter in self.delimiters:
+            self.start = self.start.replace(delimiter, "")
+
+        for delimiter in self.delimiters:
+            self.end = self.end.replace(delimiter, "")
+
+        self.tags = {self.start, self.end}
+        self.words = {self.start, self.end}
 
         with open(file_path) as file:
             for line in file:
@@ -96,22 +110,9 @@ class TextEditor:
         :return: The original line as it was written in the file <br>
                 The decorated line with the extra symbols
         """
-        delimiters = ["_", " "]
-
-        # Special symbols for the beginning and ending of the line
-        start = "(╯°□°）╯︵┻━┻"
-        end = "┬─┬ノ(゜-゜ノ)"
-
-        # Remove any delimiter (just in case)
-        for delimiter in delimiters:
-            start = start.replace(delimiter, "")
-
-        for delimiter in delimiters:
-            start = start.replace(delimiter, "")
-
         # Make the special symbols as word_tag pairs
-        start = f"{start}_{start} " * (self.window_size - 1)
-        end = f"{end}_{end}"
+        start = f"{self.start}_{self.start} " * (self.window_size - 1)
+        end = f"{self.end}_{self.end}"
 
         while True:
             with open(self.file_path) as file:

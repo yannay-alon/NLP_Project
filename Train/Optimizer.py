@@ -2,7 +2,7 @@ from ..FeatureExtraction.HistoryHandler import HistoryHandler
 from ..FeatureExtraction.FeatureID import FeatureID
 from ..FeatureExtraction.History import History
 import numpy as np
-from typing import Iterable
+from typing import Iterable, List
 from scipy.optimize import fmin_l_bfgs_b as minimize
 import scipy.sparse as sp
 
@@ -17,12 +17,14 @@ class Optimizer:
         self.path = path
         self.initialize_weight()
 
-    def objective(self, weights: np.ndarray, histories: Iterable["History"], regularization: float):
+    def _preprocess_histories(self, histories: Iterable["History"]):
         vectors = []
         alter_matrices = []
-        tags = self.history_handler.text_editor.tags
+        tags = list(self.history_handler.text_editor.tags)
 
+        histories = list(histories)
         for history in histories:
+
             vectors.append(self.feature_id.history_to_vector(history))
 
             new_vectors = []
@@ -32,33 +34,43 @@ class Optimizer:
             alter_matrices.append(sp.hstack(new_vectors))
 
         vectors = sp.hstack(vectors)
+        return vectors, alter_matrices
+
+    @staticmethod
+    def objective(weights: np.ndarray, vectors: sp.coo_matrix, alter_matrices: List[sp.coo_matrix],
+                  regularization: float):
+
         n = len(alter_matrices)
 
-        vf = lambda vec: vec.transpose().dot(weights)
+        vf = lambda vec: weights @ vec
 
-        empirical_counts = vectors.dot(np.ones(n))
+        empirical_counts = np.sum(vectors.A, axis=1)
         linear_term = float(vf(empirical_counts))
 
         numerators = [np.exp(vf(alter_matrices[i])) for i in range(n)]
         denominators = np.array([np.sum(numerators[i]) for i in range(n)])
-        normalized_term = np.sum(np.log(denominators))
+        normalization_term = np.sum(np.log(denominators))
         expected_counts = np.add.reduce([alter_matrices[i] @ numerators[i].T / denominators[i] for i in range(n)])
 
         regularization_term = 1 / 2 * regularization * np.linalg.norm(weights) ** 2
         regularization_gradient = regularization * weights
 
-        likelihood = linear_term - normalized_term - regularization_term
+        likelihood = linear_term - normalization_term - regularization_term
 
         score = empirical_counts - expected_counts - regularization_gradient
-
         return -likelihood, -score
 
     def optimize(self):
-        for iteration in range(10):
-            args = (list(self.history_handler.create_histories(100, "RANDOM")), 2)
+
+        batch_size = 500
+        for iteration in range(20):
             w_0 = self.weights
 
-            optimal_params = minimize(func=self.objective, x0=w_0, args=args, maxiter=10)
+            histories = self.history_handler.create_histories(batch_size, "RANDOM")
+            vectors, alter_matrices = self._preprocess_histories(histories)
+            args = (vectors, alter_matrices, 2)
+
+            optimal_params = minimize(func=Optimizer.objective, x0=w_0, args=args, maxiter=10 * int(np.sqrt(batch_size)))
 
             weights = optimal_params[0]
             final_score = optimal_params[1]

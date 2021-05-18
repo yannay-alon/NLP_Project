@@ -106,8 +106,10 @@ class FeatureStatistics:
                 yield key
                 break
             lower_bound = upper_bound
-        key = Key((f"Length_>{lengths[-1]}",), (cur_tag,), FeatureStatistics.length_Threshold(word_len))
-        yield key
+
+        if word_len > lengths[-1]:
+            key = Key((f"Length_>{lengths[-1]}",), (cur_tag,), FeatureStatistics.length_Threshold(word_len))
+            yield key
 
     @staticmethod
     def create_prefix_features(history: "History") -> Iterable["Key"]:
