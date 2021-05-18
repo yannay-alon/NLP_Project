@@ -12,6 +12,10 @@ def debugging():
     print(feature_id.history_to_vector(history_to_check))
 
 
+def test_infer(history: "History"):
+    pass
+
+
 def main():
     file_path = r"Data/train1.wtag"
     features_file_path = r"features.json"
@@ -32,8 +36,6 @@ def main():
     # </editor-fold>
 
     optimizer = Optimizer(feature_id, history_handler, "weights.pkl")
-    # for i in range(100):
-    #     optimizer.objective(optimizer.weights, optimizer.history_handler.create_histories(900, "RANDOM"), 2)
     optimizer.optimize()
 
 
