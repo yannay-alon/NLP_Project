@@ -1,5 +1,6 @@
 from Project.FeatureExtraction import FeatureStatistics, FeatureID, HistoryHandler, History
 from Project.Train import Optimizer
+from Project.Inference import Inference
 from os import path
 
 
@@ -12,8 +13,21 @@ def debugging():
     print(feature_id.history_to_vector(history_to_check))
 
 
-def test_infer(history: "History"):
-    pass
+def test_infer(inference: Inference):
+    sentence = "No_DT one_NN can_MD say_VB ._."
+
+    split_list = (word_tag.split("_") for word_tag in sentence.split(" "))
+    words, tags = zip(*split_list)
+
+    predicted_tags = inference.infer(words)
+    print(f"real tags: {tags}\n"
+          f"predicted: {predicted_tags}")
+
+    accuracy = 0
+    for real_tag, predicted_tag in zip(tags, predicted_tags):
+        if real_tag == predicted_tag:
+            accuracy += 1
+    print(f"Accuracy: {accuracy / len(tags) * 100: .2f}%")
 
 
 def main():
@@ -36,7 +50,9 @@ def main():
     # </editor-fold>
 
     optimizer = Optimizer(feature_id, history_handler, "weights.pkl")
-    optimizer.optimize()
+
+    inference = Inference(feature_id, optimizer.weights, history_handler)
+    test_infer(inference)
 
 
 if __name__ == '__main__':
