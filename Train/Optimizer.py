@@ -62,24 +62,26 @@ class Optimizer:
 
     def optimize(self):
 
-        batch_size = 500
-        for iteration in range(20):
+        batch_size = 2000
+        for iteration in range(50):
             w_0 = self.weights
 
             histories = self.history_handler.create_histories(batch_size, "RANDOM")
             vectors, alter_matrices = self._preprocess_histories(histories)
             args = (vectors, alter_matrices, 2)
 
-            optimal_params = minimize(func=Optimizer.objective, x0=w_0, args=args, maxiter=10 * int(np.sqrt(batch_size)))
+            optimal_params = minimize(func=Optimizer.objective, x0=w_0, args=args,
+                                      maxiter=10 * int(np.sqrt(batch_size)))
 
             weights = optimal_params[0]
-            final_score = optimal_params[1]
+            score = optimal_params[1]
             grad = optimal_params[2]["grad"]
-            print(f"{final_score}")
-            print(f"norm: {np.linalg.norm(grad)}")
+            print(f"iteration: {iteration}\n"
+                  f"\tScore: {score}\n"
+                  f"\tGradient norm: {np.linalg.norm(grad)}")
 
             self.weights = weights
-        self.save_to_pickle()
+            self.save_to_pickle()
 
         return self.weights
 
