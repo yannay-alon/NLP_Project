@@ -50,10 +50,10 @@ def main():
     # </editor-fold>
 
     optimizer = Optimizer(feature_id, history_handler, "weights.pkl")
-    optimizer.optimize()
+    # optimizer.optimize()
 
-    # inference = Inference(feature_id, optimizer.weights, history_handler)
-    # test_infer(inference)
+    inference = Inference(feature_id, optimizer.weights, history_handler)
+    test_infer(inference)
 
 
 if __name__ == '__main__':

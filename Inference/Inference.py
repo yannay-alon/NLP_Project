@@ -37,7 +37,7 @@ class Inference:
             relevant_closer_tags = [[self.start_symbol]] * start_counters + [normal_tags] * normal_counter + \
                                    [[self.end_symbol]] * end_counters
 
-            if index < self.history_length:
+            if index < self.history_length - 1:
                 relevant_opener_tags = [self.start_symbol]
             else:
                 relevant_opener_tags = normal_tags
@@ -51,7 +51,7 @@ class Inference:
                     current_vector_index = None
                     for tag_index, closer_tag in enumerate(relevant_closer_tags[-1]):
                         history = History(words=history_words,
-                                          tags=(opener_tag, *history_closer_tags[-1:], closer_tag))
+                                          tags=(opener_tag, *history_closer_tags[:-1], closer_tag))
                         vector = self.feature_id.history_to_vector(history)
                         vectors.append(vector)
                         if history_closer_tags[-1] == closer_tag:
@@ -68,15 +68,15 @@ class Inference:
                 cur_probability[history_closer_tags] = temp_probabilities[argmax_index]
                 back_pointers[-1][history_closer_tags] = temp_back_pointers[argmax_index]
 
+            print(f"total probability: {sum(cur_probability.values())}")
             prev_probability = cur_probability.copy()
             cur_probability.clear()
 
         predicted_tags = [""] * sentence_length
         key = max(prev_probability, key=prev_probability.get)
-        predicted_tags[-self.history_length + 1:] = [*back_pointers[-1][key]]
+        predicted_tags[-self.history_length + 1:] = [*key]
         for k in range(sentence_length - self.history_length + 1, 0, -1):
-            index = k - 1
-            key = tuple(predicted_tags[index: index + self.history_length - 1])
-            predicted_tags[index] = back_pointers[index + self.history_length - 1][key]
+            key = tuple(predicted_tags[k: k + self.history_length - 1])
+            predicted_tags[k - 1] = back_pointers[k - 1][key]
 
-        return predicted_tags
+        return predicted_tags[self.history_length - 1: -1]
