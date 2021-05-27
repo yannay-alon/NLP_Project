@@ -60,8 +60,8 @@ class Optimizer:
         return -likelihood, -gradient
 
     def optimize(self):
-        batch_size = 10
-        for iteration in range(50):
+        batch_size = 100
+        for iteration in range(10):
             w_0 = self.weights
 
             histories = self.history_handler.create_histories(batch_size, "RANDOM")

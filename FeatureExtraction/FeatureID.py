@@ -38,10 +38,16 @@ class FeatureID:
         """
         Extract all relevant features from feature-statistics
         """
+        chosen_features = dict()
+
         for key, count in self.feature_statistics.feature_dictionary.items():
             if key.threshold <= count:
                 self.features_dict[key] = self.id_counter
                 self.id_counter += 1
+                chosen_features[key] = count
+
+        pd.DataFrame.from_dict(data=chosen_features, orient="index") \
+            .to_csv("Features_Threshold.csv", header=False)
 
     def history_to_vector(self, history: "History"):
         feature_vector = scipy.sparse.dok_matrix((self.number_of_features, 1), dtype=int)

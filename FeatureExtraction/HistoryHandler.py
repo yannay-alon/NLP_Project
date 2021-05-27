@@ -28,33 +28,6 @@ class HistoryHandler:
                         In any other case, ignores the kwargs
         :return: yields the histories from the read lines
         """
-
-        # def increment(start, step, end, cyclic=True):
-        #     # TODO: limit the number of histories to be the number of histories in the text
-        #
-        #     yield_counter = 0  # Counter for the number of the yielded histories
-        #     line_index = -1  # Counter for the index of the line
-        #     for decorated_line in self.text_editor.read_file(cyclic=cyclic):
-        #         line_index += 1
-        #
-        #         # traces the index for the increment
-        #         if line_index < start:
-        #             continue
-        #         if (line_index - start) % step != 0:
-        #             continue
-        #
-        #         split_words = decorated_line.split(" ")
-        #
-        #         k_grams = zip(*[split_words[i:] for i in range(self.history_length)])
-        #         for k_gram in k_grams:
-        #             split_list = (word_tag.split("_") for word_tag in k_gram)
-        #             words, tags = zip(*split_list)
-        #             yield History(words, tags)
-        #
-        #             yield_counter += 1
-        #             if end is not None and end <= yield_counter:
-        #                 return
-
         def to_histories(lines: List[str]) -> List[History]:
             histories = []
             for line in lines:
@@ -69,14 +42,10 @@ class HistoryHandler:
 
         decorated_lines = self.text_editor.decorated_lines
         if style == "ALL":
-            # return increment(0, 1, max_number, False)
             chosen_lines = decorated_lines
         elif style == "RANDOM":
             chosen_lines = random.sample(decorated_lines, min(max_number, len(decorated_lines)))
-            # return increment(random.randint(0, self.text_editor.text_size // 2),
-            #                  random.randint(1, int(math.sqrt(self.text_editor.text_size))), max_number)
         elif style == "INCREMENT":
-            # return increment(kwargs["start"], kwargs["step"], max_number)
             start = kwargs["start"]
             step = kwargs["step"]
             indices = range(start, step, start + (max_number - 1) * step)
@@ -98,8 +67,8 @@ class TextEditor:
         self.text_size = 0
 
         # Special symbols for the beginning and ending of the line
-        self.start = "(╯°□°）╯︵┻━┻"
-        self.end = "┬─┬ノ(゜-゜ノ)"
+        self.start = "┻━┻"
+        self.end = "┬─┬"
 
         self.delimiters = ["_", " "]
 

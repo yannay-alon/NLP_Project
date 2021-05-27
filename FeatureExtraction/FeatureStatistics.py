@@ -28,28 +28,17 @@ class FeatureStatistics:
     """
 
     # <editor-fold desc="Thresholds">
-    # Has_Pun_Threshold = polynomial_threshold([25])
-    # Alphanum_Threshold = polynomial_threshold([25])
-    # Has_num_Threshold = polynomial_threshold([20])
-    # All_num_Threshold = polynomial_threshold([15])
-    # Start_Capital_Threshold = polynomial_threshold([25])
-    # All_Capital_Threshold = polynomial_threshold([20])
-    # Prefix_Threshold = polynomial_threshold([20, -7, 0.7])
-    # Suffix_Threshold = polynomial_threshold([15, -5, 0.5])
-    # n_gram_Threshold = polynomial_threshold([24, -10, 1])
-    # length_Threshold = polynomial_threshold([20, 2, -0.2]))
-
-    Has_Pun_Threshold = polynomial_threshold([2])
-    Alphanum_Threshold = polynomial_threshold([2])
-    Has_num_Threshold = polynomial_threshold([2])
-    All_num_Threshold = polynomial_threshold([2])
-    Start_Capital_Threshold = polynomial_threshold([2])
-    All_Capital_Threshold = polynomial_threshold([2])
-    Prefix_Threshold = polynomial_threshold([2])
-    Suffix_Threshold = polynomial_threshold([2])
-    n_gram_Threshold = polynomial_threshold([2])
-    n_gram_tags_Threshold = polynomial_threshold([2])
-    length_Threshold = polynomial_threshold([2])
+    Has_Pun_Threshold = polynomial_threshold([10])
+    Alphanum_Threshold = polynomial_threshold([10])
+    Has_num_Threshold = polynomial_threshold([10])
+    All_num_Threshold = polynomial_threshold([10])
+    Start_Capital_Threshold = polynomial_threshold([10])
+    All_Capital_Threshold = polynomial_threshold([10])
+    Prefix_Threshold = polynomial_threshold([38, -9])
+    Suffix_Threshold = polynomial_threshold([38, -9])
+    n_gram_Threshold = polynomial_threshold([15, -7, 1])
+    n_gram_tags_Threshold = polynomial_threshold([15, -7, 1])
+    length_Threshold = polynomial_threshold([10])
 
     # </editor-fold>
 
