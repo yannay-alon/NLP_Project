@@ -61,6 +61,7 @@ class Optimizer:
 
     def optimize(self):
         batch_size = 100
+        epsilon = 0.01
         for iteration in range(10):
             w_0 = self.weights
 
@@ -69,7 +70,7 @@ class Optimizer:
             args = (vectors, alter_matrices, 2)
 
             optimal_params = minimize(func=Optimizer.objective, x0=w_0, args=args,
-                                      maxiter=10 * int(np.sqrt(batch_size)))
+                                      maxiter=10 * int(np.sqrt(batch_size)), )
 
             weights = optimal_params[0]
             score = optimal_params[1]
@@ -80,6 +81,9 @@ class Optimizer:
 
             self.weights = weights
             self.save_to_pickle()
+
+            if np.linalg.norm(grad) < epsilon:
+                break
 
         return self.weights
 
