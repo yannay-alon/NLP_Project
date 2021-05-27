@@ -56,13 +56,11 @@ class Optimizer:
         regularization_gradient = regularization * weights
 
         likelihood = linear_term - normalization_term - regularization_term
-
-        score = empirical_counts - expected_counts - regularization_gradient
-        return -likelihood, -score
+        gradient = empirical_counts - expected_counts - regularization_gradient
+        return -likelihood, -gradient
 
     def optimize(self):
-
-        batch_size = 2000
+        batch_size = 10
         for iteration in range(50):
             w_0 = self.weights
 

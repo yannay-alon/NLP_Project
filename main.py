@@ -14,20 +14,23 @@ def debugging():
 
 
 def test_infer(inference: Inference):
-    sentence = "No_DT one_NN can_MD say_VB ._."
-
-    split_list = (word_tag.split("_") for word_tag in sentence.split(" "))
-    words, tags = zip(*split_list)
-
-    predicted_tags = inference.infer(words)
-    print(f"real tags: {tags}\n"
-          f"predicted: {predicted_tags}")
-
+    sentences = ["No_DT one_NN can_MD say_VB ._.",
+                 "``_`` It_PRP 's_VBZ tabloid_JJ news_NN from_IN A_NN to_TO Z_NN ._. ''_''"]
     accuracy = 0
-    for real_tag, predicted_tag in zip(tags, predicted_tags):
-        if real_tag == predicted_tag:
-            accuracy += 1
-    print(f"Accuracy: {accuracy / len(tags) * 100: .2f}%")
+    counter = 0
+    for sentence in sentences:
+        split_list = (word_tag.split("_") for word_tag in sentence.split(" "))
+        words, tags = zip(*split_list)
+
+        predicted_tags = inference.infer(words, beam_size=15)
+        print(f"real tags: {tags}\n"
+              f"predicted: {predicted_tags}\n")
+
+        for real_tag, predicted_tag in zip(tags, predicted_tags):
+            if real_tag == predicted_tag:
+                accuracy += 1
+            counter += 1
+    print(f"Accuracy: {accuracy / counter * 100: .2f}%")
 
 
 def main():

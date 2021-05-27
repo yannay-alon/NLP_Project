@@ -18,7 +18,7 @@ class Inference:
         self.history_length = history_handler.history_length
 
     def infer(self, words: Tuple[str, ...], beam_size: int = 5):
-        # TODO: Check for problems third iteration (maybe forth)
+        # TODO: Implement beam that works...
         words = [self.start_symbol] * (self.history_length - 1) + [*words] + [self.end_symbol]
         sentence_length = len(words)
 
@@ -37,16 +37,20 @@ class Inference:
             relevant_closer_tags = [[self.start_symbol]] * start_counters + [normal_tags] * normal_counter + \
                                    [[self.end_symbol]] * end_counters
 
-            if index < self.history_length - 1:
-                relevant_opener_tags = [self.start_symbol]
-            else:
-                relevant_opener_tags = normal_tags
-
             for history_closer_tags in product(*relevant_closer_tags):
+
+                relevant_opener_tags = [key[0] for key in prev_probability.keys() if
+                                        key[1:] == history_closer_tags[:-1]]
+                if len(relevant_opener_tags) == 0:
+                    continue
+
                 temp_probabilities = []
                 temp_back_pointers = []
 
                 for opener_tag in relevant_opener_tags:
+                    prev_value = prev_probability.get((opener_tag, *history_closer_tags[:-1]), 0)
+                    if prev_value == 0:
+                        continue
                     vectors = []
                     current_vector_index = None
                     for tag_index, closer_tag in enumerate(relevant_closer_tags[-1]):
@@ -60,7 +64,6 @@ class Inference:
                     numerators = np.exp(self.weights @ matrix)
                     prob = numerators[current_vector_index] / np.sum(numerators)
 
-                    prev_value = prev_probability.get((opener_tag, *history_closer_tags[:-1]), 0)
                     temp_probabilities.append(prev_value * prob)
                     temp_back_pointers.append(opener_tag)
 
@@ -69,7 +72,8 @@ class Inference:
                 back_pointers[-1][history_closer_tags] = temp_back_pointers[argmax_index]
 
             print(f"total probability: {sum(cur_probability.values())}")
-            prev_probability = cur_probability.copy()
+            temp_probability = list(sorted(cur_probability.items(), key=lambda item: item[1], reverse=True))[:beam_size]
+            prev_probability = dict(temp_probability)
             cur_probability.clear()
 
         predicted_tags = [""] * sentence_length

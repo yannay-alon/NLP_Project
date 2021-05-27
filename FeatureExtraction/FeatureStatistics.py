@@ -28,20 +28,32 @@ class FeatureStatistics:
     """
 
     # <editor-fold desc="Thresholds">
-    Has_Pun_Threshold = polynomial_threshold([25])
-    Alphanum_Threshold = polynomial_threshold([25])
-    Has_num_Threshold = polynomial_threshold([20])
-    All_num_Threshold = polynomial_threshold([15])
-    Start_Capital_Threshold = polynomial_threshold([25])
-    All_Capital_Threshold = polynomial_threshold([20])
-    Prefix_Threshold = polynomial_threshold([20, -7, 0.7])
-    Suffix_Threshold = polynomial_threshold([15, -5, 0.5])
-    n_gram_Threshold = polynomial_threshold([24, -10, 1])
-    length_Threshold = polynomial_threshold([20, 2, -0.2])
+    # Has_Pun_Threshold = polynomial_threshold([25])
+    # Alphanum_Threshold = polynomial_threshold([25])
+    # Has_num_Threshold = polynomial_threshold([20])
+    # All_num_Threshold = polynomial_threshold([15])
+    # Start_Capital_Threshold = polynomial_threshold([25])
+    # All_Capital_Threshold = polynomial_threshold([20])
+    # Prefix_Threshold = polynomial_threshold([20, -7, 0.7])
+    # Suffix_Threshold = polynomial_threshold([15, -5, 0.5])
+    # n_gram_Threshold = polynomial_threshold([24, -10, 1])
+    # length_Threshold = polynomial_threshold([20, 2, -0.2]))
+
+    Has_Pun_Threshold = polynomial_threshold([2])
+    Alphanum_Threshold = polynomial_threshold([2])
+    Has_num_Threshold = polynomial_threshold([2])
+    All_num_Threshold = polynomial_threshold([2])
+    Start_Capital_Threshold = polynomial_threshold([2])
+    All_Capital_Threshold = polynomial_threshold([2])
+    Prefix_Threshold = polynomial_threshold([2])
+    Suffix_Threshold = polynomial_threshold([2])
+    n_gram_Threshold = polynomial_threshold([2])
+    n_gram_tags_Threshold = polynomial_threshold([2])
+    length_Threshold = polynomial_threshold([2])
 
     # </editor-fold>
 
-    def __init__(self, histories: Iterable["History"]):
+    def __init__(self, histories: Iterable[History]):
         self.feature_dictionary = OrderedDict()
 
         self.feature_functions = [
@@ -51,13 +63,14 @@ class FeatureStatistics:
             FeatureStatistics.create_n_gram_features,
             FeatureStatistics.create_alpha_num_features,
             FeatureStatistics.create_length_features,
+            FeatureStatistics.create_n_gram_tags_features,
         ]
 
         # Create all relevant features
         for history in histories:
             self.initialize_feature_dictionary(history)
 
-    def initialize_feature_dictionary(self, history: "History") -> None:
+    def initialize_feature_dictionary(self, history: History) -> None:
         """
         Call all of the feature-extraction function
         """
@@ -66,7 +79,7 @@ class FeatureStatistics:
                 self.feature_dictionary[key] = 0
             self.feature_dictionary[key] += 1
 
-    def get_keys(self, history: "History") -> Iterable["Key"]:
+    def get_keys(self, history: History) -> Iterable[Key]:
         for func in self.feature_functions:
             keys = func(history)
             for key in keys:
@@ -74,7 +87,7 @@ class FeatureStatistics:
 
     # <editor-fold desc="create_features functions">
     @staticmethod
-    def create_capital_features(history: "History") -> Iterable["Key"]:
+    def create_capital_features(history: History) -> Iterable[Key]:
         """
         Extract features where the current word starts with a capital with a specific tag
         """
@@ -90,7 +103,7 @@ class FeatureStatistics:
             yield key
 
     @staticmethod
-    def create_length_features(history: "History") -> Iterable["Key"]:
+    def create_length_features(history: History) -> Iterable[Key]:
         """
         Extract features where the current word starts with a capital with a specific tag
         """
@@ -112,7 +125,7 @@ class FeatureStatistics:
             yield key
 
     @staticmethod
-    def create_prefix_features(history: "History") -> Iterable["Key"]:
+    def create_prefix_features(history: History) -> Iterable[Key]:
         """
         Extract features for the prefix of the current word with a specific tag
         """
@@ -126,7 +139,7 @@ class FeatureStatistics:
             yield key
 
     @staticmethod
-    def create_suffix_features(history: "History") -> Iterable["Key"]:
+    def create_suffix_features(history: History) -> Iterable[Key]:
         """
         Extract features for the suffix of the current word with a specific tag
         """
@@ -140,7 +153,7 @@ class FeatureStatistics:
             yield key
 
     @staticmethod
-    def create_alpha_num_features(history: "History") -> Iterable["Key"]:
+    def create_alpha_num_features(history: History) -> Iterable[Key]:
         """
         Extract features where the current word starts with a capital with a specific tag
         """
@@ -161,7 +174,7 @@ class FeatureStatistics:
             yield key
 
     @staticmethod
-    def create_n_gram_features(history: "History") -> Iterable["Key"]:
+    def create_n_gram_features(history: History) -> Iterable[Key]:
         """
         Extract features for the k-grams with their corresponding tags
         """
@@ -169,6 +182,19 @@ class FeatureStatistics:
             words = history.words[-length:]
             tags = history.tags[-length:]
             key = Key(words, tags, FeatureStatistics.n_gram_Threshold(length))
+            yield key
+            key = Key(words[:-1], tags, FeatureStatistics.n_gram_Threshold(length))
+            yield key
+
+    @staticmethod
+    def create_n_gram_tags_features(history: History) -> Iterable[Key]:
+        """
+        Extract features for the k-grams, only their corresponding tags
+        """
+        for length in range(1, len(history) + 1):
+            words = tuple()
+            tags = history.tags[-length:]
+            key = Key(words, tags, FeatureStatistics.n_gram_tags_Threshold(length))
             yield key
 
     # </editor-fold>

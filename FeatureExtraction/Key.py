@@ -8,7 +8,7 @@ class Key:
         self.threshold = threshold
 
     def __len__(self):
-        return len(self.words)
+        return max(len(self.words), len(self.tags))
 
     def __eq__(self, other):
         if isinstance(other, Key):
