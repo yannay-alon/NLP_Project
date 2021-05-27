@@ -52,7 +52,8 @@ class HistoryHandler:
             chosen_lines = [decorated_lines[i % len(decorated_lines)] for i in indices]
         else:
             chosen_lines = []
-        return to_histories(chosen_lines)
+        histories = to_histories(chosen_lines)
+        return histories
 
 
 class TextEditor:

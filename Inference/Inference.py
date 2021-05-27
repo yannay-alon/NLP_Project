@@ -29,16 +29,15 @@ class Inference:
         for index, history_words in enumerate(zip(*[words[i:] for i in range(self.history_length)])):
             back_pointers.append(dict())
 
-            start_counters = max(0, self.history_length - 2 - index)
-            end_counters = 1 if index == sentence_length - self.history_length else 0
-            normal_counter = self.history_length - 1 - start_counters - end_counters
-            relevant_closer_tags = [[self.start_symbol]] * start_counters + [normal_tags] * normal_counter + \
-                                   [[self.end_symbol]] * end_counters
+            if index != sentence_length - self.history_length:
+                relevant_closer_tags = normal_tags
+            else:
+                relevant_closer_tags = [self.end_symbol]
 
             for prev_tags, prev_value in prev_probability.items():
                 vectors = []
                 keys = []
-                for closer_tag in relevant_closer_tags[-1]:
+                for closer_tag in relevant_closer_tags:
                     key = (*prev_tags[1:], closer_tag)
                     keys.append(key)
                     history = History(words=history_words,
@@ -52,6 +51,12 @@ class Inference:
                     if probability > cur_probability.get(key, 0):
                         cur_probability[key] = probability
                         back_pointers[index][key] = prev_tags[0]
+
+            # start_counters = max(0, self.history_length - 2 - index)
+            # end_counters = 1 if index == sentence_length - self.history_length else 0
+            # normal_counter = self.history_length - 1 - start_counters - end_counters
+            # relevant_closer_tags = [[self.start_symbol]] * start_counters + [normal_tags] * normal_counter + \
+            #                        [[self.end_symbol]] * end_counters
 
             # for history_closer_tags in product(*relevant_closer_tags):
             #

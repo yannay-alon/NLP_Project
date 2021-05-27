@@ -60,12 +60,14 @@ class Optimizer:
         return -likelihood, -gradient
 
     def optimize(self):
-        batch_size = 100
-        epsilon = 0.01
+        batch_size = 20
+        epsilon = 0.001
         for iteration in range(10):
             w_0 = self.weights
 
             histories = self.history_handler.create_histories(batch_size, "RANDOM")
+            print(f"Iteration {iteration}\n"
+                  f"\tNumber of histories: {len(histories)}")
             vectors, alter_matrices = self._preprocess_histories(histories)
             args = (vectors, alter_matrices, 2)
 
@@ -75,8 +77,7 @@ class Optimizer:
             weights = optimal_params[0]
             score = optimal_params[1]
             grad = optimal_params[2]["grad"]
-            print(f"iteration: {iteration}\n"
-                  f"\tScore: {score}\n"
+            print(f"\tScore: {score}\n"
                   f"\tGradient norm: {np.linalg.norm(grad)}")
 
             self.weights = weights

@@ -9,6 +9,7 @@ def test_infer(inference: Inference):
     accuracy = 0
     counter = 0
     sentence_counter = 0
+    max_sentences = 200
 
     start = time.time()
     with open(r"Data/test1.wtag") as file:
@@ -17,15 +18,17 @@ def test_infer(inference: Inference):
             words, tags = zip(*split_list)
 
             predicted_tags = inference.infer(words, beam_size=15)
-            print(f"real tags: {tags}\n"
-                  f"predicted: {predicted_tags}\n")
+            # print(f"real tags: {tags}\n"
+            #       f"predicted: {predicted_tags}\n")
 
             for real_tag, predicted_tag in zip(tags, predicted_tags):
                 if real_tag == predicted_tag:
                     accuracy += 1
                 counter += 1
             sentence_counter += 1
-            if sentence_counter > 200:
+            if (10 * sentence_counter) % max_sentences == 0:
+                print(f"Finished {sentence_counter / max_sentences * 100}% of the predictions")
+            if max_sentences <= sentence_counter:
                 break
     end = time.time()
     print(f"Accuracy: {accuracy / counter * 100: .2f}%")
@@ -37,9 +40,11 @@ def test_infer(inference: Inference):
 def main():
     file_path = r"Data/train1.wtag"
     features_file_path = r"features.json"
-    max_gram = 3
 
-    # <editor-fold desc="create feature dict">
+    max_gram = 3
+    optimize = False
+
+    # <editor-fold desc="Initialize the features">
 
     history_handler = HistoryHandler(file_path, max_gram)
     if path.exists(features_file_path):
@@ -48,16 +53,23 @@ def main():
         feature_statistics = FeatureStatistics(history_handler.create_histories(None, "ALL"))
         feature_id = FeatureID(feature_statistics)
 
-        # Save the features in as csv file
+        # Save the features as csv file
         feature_id.save_feature_as_json(features_file_path)
 
     # </editor-fold>
 
+    # <editor-fold desc="Optimization">
     optimizer = Optimizer(feature_id, history_handler, "weights.pkl")
-    # optimizer.optimize()
+    if optimize:
+        optimizer.optimize()
 
+    # </editor-fold>
+
+    # <editor-fold desc="Inference">
     inference = Inference(feature_id, optimizer.weights, history_handler)
     test_infer(inference)
+
+    # </editor-fold>
 
 
 if __name__ == '__main__':
