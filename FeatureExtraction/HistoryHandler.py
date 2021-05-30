@@ -28,16 +28,17 @@ class HistoryHandler:
                         In any other case, ignores the kwargs
         :return: yields the histories from the read lines
         """
+
         def to_histories(lines: List[str]) -> List[History]:
             histories = []
             for line in lines:
                 split_words = line.split(" ")
 
-                k_grams = zip(*[split_words[i:] for i in range(self.history_length)])
+                k_grams = zip(*[split_words[i:] for i in range(self.history_length + 1)])
                 for k_gram in k_grams:
                     split_list = (word_tag.split("_") for word_tag in k_gram)
                     words, tags = zip(*split_list)
-                    histories.append(History(words, tags))
+                    histories.append(History(words[:-1], tags[:-1], tuple([words[-1]])))
             return histories
 
         decorated_lines = self.text_editor.decorated_lines

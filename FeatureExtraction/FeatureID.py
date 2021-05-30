@@ -49,14 +49,14 @@ class FeatureID:
         pd.DataFrame.from_dict(data=chosen_features, orient="index") \
             .to_csv("Features_Threshold.csv", header=False)
 
-    def history_to_vector(self, history: "History"):
+    def history_to_vector(self, history: History) -> scipy.sparse.csc_matrix:
         feature_vector = scipy.sparse.dok_matrix((self.number_of_features, 1), dtype=int)
         for key in self.feature_statistics.get_keys(history):
             try:
                 feature_vector[self.features_dict[key], 0] = 1
             except KeyError:
                 pass
-        return feature_vector.tocsr()
+        return feature_vector.tocsc()
 
     # <editor-fold desc="I/O json">
     @staticmethod
@@ -67,14 +67,14 @@ class FeatureID:
 
         dictionary = pd.read_json(path).to_dict(orient="records")
         for d in dictionary:
-            key = Key(tuple(d["Words"]), tuple(d["Tags"]), 1)
+            key = Key(tuple(d["Words"]), tuple(d["Tags"]), 1, tuple(d["Next_Words"]))
             feature_id.features_dict[key] = d["Value"]
         feature_id.id_counter = len(feature_id.features_dict.keys())
 
         return feature_id
 
     def save_feature_as_json(self, path: str):
-        data = [[[*key.words], [*key.tags], value] for key, value in self.features_dict.items()]
-        pd.DataFrame(data, columns=["Words", "Tags", "Value"]) \
+        data = [[[*key.words], [*key.tags], value, [*key.next_words]] for key, value in self.features_dict.items()]
+        pd.DataFrame(data, columns=["Words", "Tags", "Value", "Next_Words"]) \
             .to_json(path, orient="records")
     # </editor-fold>
