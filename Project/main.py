@@ -11,8 +11,10 @@ import time
 
 def plot_confusion_matrix(matrix: pd.DataFrame):
     matrix.to_csv("confusion_matrix.csv", header=True)
-    np.fill_diagonal(matrix.values, 0)
-    indices = pd.DataFrame(data=matrix, index=matrix.index, columns=matrix.columns).sum().sort_values(ascending=False).index
+    matrix_copy = matrix.copy()
+    np.fill_diagonal(matrix_copy.values, 0)
+    indices = pd.DataFrame(data=matrix_copy, index=matrix_copy.index, columns=matrix_copy.columns).sum().sort_values(
+        ascending=False).index
     # sn.heatmap(matrix.loc[indices[:10], indices], annot=True, square=True, linewidths=0.5, fmt="d", cmap="coolwarm")
     sn.heatmap(matrix.loc[indices[:10], indices], vmin=matrix.values.min(), vmax=matrix.values.max(),
                cmap="YlGnBu", linewidths=0.1, annot=True,
@@ -30,7 +32,7 @@ def test_infer(inference: Inference):
     matrix = pd.DataFrame(data=0, index=tags, columns=tags)
 
     start = time.time()
-    with open(r"Data/test1.wtag") as file:
+    with open(r"Data/train2.wtag") as file:
         for sentence in file:
             split_list = (word_tag.split("_") for word_tag in sentence.strip("\n").split(" "))
             words, tags = zip(*split_list)
@@ -58,7 +60,7 @@ def test_infer(inference: Inference):
 
 
 def main():
-    file_path = r"Data/train1.wtag"
+    file_path = r"Data/train2.wtag"
     features_file_path = r"features.json"
 
     max_gram = 3
@@ -95,7 +97,8 @@ def main():
 def test_confusion_matrix():
     matrix = pd.read_csv("confusion_matrix.csv", index_col=0, header=0)
     np.fill_diagonal(matrix.values, 0)
-    indices = pd.DataFrame(data=matrix, index=matrix.index, columns=matrix.columns).sum().sort_values(ascending=False).index
+    indices = pd.DataFrame(data=matrix, index=matrix.index, columns=matrix.columns).sum().sort_values(
+        ascending=False).index
     # sn.heatmap(matrix.loc[indices[:10], indices], annot=True, square=True, linewidths=0.5, fmt="d", cmap="coolwarm")
     sn.heatmap(matrix.loc[indices[:10], indices], vmin=matrix.values.min(), vmax=matrix.values.max(),
                cmap="YlGnBu", linewidths=0.1, annot=True,
@@ -104,6 +107,6 @@ def test_confusion_matrix():
 
 
 if __name__ == '__main__':
-    test_confusion_matrix()
+    main()
 
-#https://sites.google.com/site/partofspeechhelp/home/jj_rb
+# https://sites.google.com/site/partofspeechhelp/home/jj_rb
