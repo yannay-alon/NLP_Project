@@ -10,11 +10,13 @@ import time
 
 
 def plot_confusion_matrix(matrix: pd.DataFrame):
-    matrix.to_csv("confusion_matrix.csv", header=False)
-    matrix_copy = matrix.copy()
-    np.fill_diagonal(matrix_copy.values, 0)
-    indices = pd.DataFrame(data=matrix_copy, index=matrix.index, columns=matrix.columns).sum().nlargest(10).index
-    sn.heatmap(matrix[indices], annot=True)
+    matrix.to_csv("confusion_matrix.csv", header=True)
+    np.fill_diagonal(matrix.values, 0)
+    indices = pd.DataFrame(data=matrix, index=matrix.index, columns=matrix.columns).sum().sort_values(ascending=False).index
+    # sn.heatmap(matrix.loc[indices[:10], indices], annot=True, square=True, linewidths=0.5, fmt="d", cmap="coolwarm")
+    sn.heatmap(matrix.loc[indices[:10], indices], vmin=matrix.values.min(), vmax=matrix.values.max(),
+               cmap="YlGnBu", linewidths=0.1, annot=True,
+               annot_kws={"fontsize": 8})
     plt.show()
 
 
@@ -60,7 +62,7 @@ def main():
     features_file_path = r"features.json"
 
     max_gram = 3
-    optimize = True
+    optimize = False
 
     # <editor-fold desc="Initialize the features">
 
@@ -90,5 +92,18 @@ def main():
     # </editor-fold>
 
 
+def test_confusion_matrix():
+    matrix = pd.read_csv("confusion_matrix.csv", index_col=0, header=0)
+    np.fill_diagonal(matrix.values, 0)
+    indices = pd.DataFrame(data=matrix, index=matrix.index, columns=matrix.columns).sum().sort_values(ascending=False).index
+    # sn.heatmap(matrix.loc[indices[:10], indices], annot=True, square=True, linewidths=0.5, fmt="d", cmap="coolwarm")
+    sn.heatmap(matrix.loc[indices[:10], indices], vmin=matrix.values.min(), vmax=matrix.values.max(),
+               cmap="YlGnBu", linewidths=0.1, annot=True,
+               annot_kws={"fontsize": 8})
+    plt.show()
+
+
 if __name__ == '__main__':
-    main()
+    test_confusion_matrix()
+
+#https://sites.google.com/site/partofspeechhelp/home/jj_rb

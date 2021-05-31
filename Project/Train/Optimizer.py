@@ -99,7 +99,7 @@ class Optimizer:
 
         :return: The calculated weights vector
         """
-        batch_size = 500  # The number of lines in each batch (about 25 histories per line)
+        batch_size = 200  # The number of lines in each batch (about 25 histories per line)
         epsilon = 0  # .001  # The gradient threshold (if the norm of the gradient is less than epsilon, stops)
         # Get random histories for this batch
         for iteration in range(30):
@@ -128,6 +128,8 @@ class Optimizer:
 
             if np.linalg.norm(grad) < epsilon:  # Check the stop condition
                 break
+
+            batch_size = int(min(batch_size * 1.5, 500))
 
         return self.weights
 

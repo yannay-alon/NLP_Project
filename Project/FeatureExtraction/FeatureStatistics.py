@@ -34,12 +34,12 @@ class FeatureStatistics:
     All_num_Threshold = polynomial_threshold([10])
     Start_Capital_Threshold = polynomial_threshold([10])
     All_Capital_Threshold = polynomial_threshold([10])
-    Prefix_Threshold = polynomial_threshold([10])
-    Suffix_Threshold = polynomial_threshold([10])
-    n_gram_Threshold = polynomial_threshold([10])
-    n_gram_tags_Threshold = polynomial_threshold([10])
-    next_word_Threshold = polynomial_threshold([10])
+    Prefix_Threshold = polynomial_threshold([38, -9])
+    Suffix_Threshold = polynomial_threshold([38, -9])
+    n_gram_Threshold = polynomial_threshold([15, -7, 1])
+    n_gram_tags_Threshold = polynomial_threshold([15, -7, 1])
     length_Threshold = polynomial_threshold([10])
+    next_word_Threshold = polynomial_threshold([5])
 
     # </editor-fold>
 
@@ -192,5 +192,8 @@ class FeatureStatistics:
     def create_next_word_feature(history: History) -> Iterable[Key]:
         key = Key(history.words[-1:], history.tags[-1:], FeatureStatistics.next_word_Threshold(1), history.next_words)
         yield key
+        key = Key(tuple(), history.tags[-1:], FeatureStatistics.next_word_Threshold(1), history.next_words)
+        yield key
+
 
     # </editor-fold>
